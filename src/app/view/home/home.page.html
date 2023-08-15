@@ -7,30 +7,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list>
-    <ion-item>
-      <ion-input label="Nome" placeholder="Insira o nome" [(ngModel)]="nome"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-input label="Telefone" type="number" placeholder="Insira o telefone" [(ngModel)]="telefone"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-input label="Email" placeholder="Insira o email" [(ngModel)]="email"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-select label="Gênero" placeholder="Selecione" [(ngModel)]="genero">
-        <ion-select-option value="0">Masculino</ion-select-option>
-        <ion-select-option value="1">Feminino</ion-select-option>
-        <ion-select-option value="2">Não Declarado</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-button expand="full" (click)="cadastrar()">Cadastrar</ion-button>
-  </ion-list>
-<br /><br /><br /><br />
 
   <ion-list>
   <ion-item *ngFor="let contato of this.listaDeContatos">
@@ -38,4 +14,12 @@
      <ion-label>{{contato.telefone}}</ion-label>
   </ion-item>
   </ion-list>
+
+
+  <ion-fab horizontal="end" vertical="bottom">
+    <ion-fab-button (click)="irParaCadastrar()" >
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>
