@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { Contato } from 'src/app/model/entities/Contato';
 import { ContatoService } from 'src/app/model/services/contato.service';
 
@@ -15,9 +16,13 @@ export class DetalharPage implements OnInit {
   email! : string;
   genero! : number;
   contato! : Contato;
+  edicao: boolean = true;
+
 
   constructor(private actRoute : ActivatedRoute,
-    private contatoService : ContatoService) { }
+    private contatoService : ContatoService,
+    private alertController: AlertController,
+    private router: Router) { }
 
   ngOnInit() {
     this.actRoute.params.subscribe((parametros) => {
@@ -31,5 +36,60 @@ export class DetalharPage implements OnInit {
     this.email = this.contato.email;
     this.genero = this.contato.genero;
   }
+
+  habilitar(){
+    if(this.edicao){
+      this.edicao = false;
+    }else{
+      this.edicao = true;
+    }
+  }
+
+
+  editar(){
+    if(this.nome && this.telefone){
+      let novo: Contato = new Contato(this.nome, this.telefone);
+      novo.email = this.email;
+      novo.genero = this.genero;
+      this.contatoService.atualizar(this.indice, novo);
+      this.router.navigate(["/home"]);
+    }else{
+      this.presentAlert("Erro", "Nome e Telefone são campos Obrigatórios!");
+    }
+  }
+
+  excluir(){
+    this.contatoService.deletar(this.indice);
+    this.router.navigate(["/home"]);
+  }
+
+  async presentAlert(subHeader: string, message: string) {
+    const alert = await this.alertController.create({
+      header: 'Agenda de Contatos',
+      subHeader: subHeader,
+      message: message,
+      buttons: ['OK'],
+    });
+    await alert.present();
+  }
+
+  async presentAlertConfirm(subHeader: string, message: string) {
+    const alert = await this.alertController.create({
+      header: 'Agenda de Contatos',
+      subHeader: subHeader,
+      message: message,
+      buttons:  [
+        {text: 'Cancel', role: 'cancel',handler: () => {
+           // this.handlerMessage = 'Alert canceled';
+          }, },
+        {text: 'OK', role: 'confirm', handler: () => {
+          //  this.handlerMessage = 'Alert confirmed';
+        },},
+      ]
+    });
+    await alert.present();
+  }
+
+
 
 }
