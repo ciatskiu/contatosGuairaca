@@ -59,6 +59,10 @@ export class DetalharPage implements OnInit {
   }
 
   excluir(){
+    this.presentConfirmAlert("ATENÇÃO", "Deseja realmente excluir o contato?");
+  }
+
+  excluirContato(){
     this.contatoService.deletar(this.indice);
     this.router.navigate(["/home"]);
   }
@@ -73,19 +77,15 @@ export class DetalharPage implements OnInit {
     await alert.present();
   }
 
-  async presentAlertConfirm(subHeader: string, message: string) {
+  async presentConfirmAlert(subHeader: string, message: string) {
     const alert = await this.alertController.create({
       header: 'Agenda de Contatos',
       subHeader: subHeader,
       message: message,
-      buttons:  [
-        {text: 'Cancel', role: 'cancel',handler: () => {
-           // this.handlerMessage = 'Alert canceled';
-          }, },
-        {text: 'OK', role: 'confirm', handler: () => {
-          //  this.handlerMessage = 'Alert confirmed';
-        },},
-      ]
+      buttons: [
+        {text: 'Cancelar', role: 'cancelar', handler: ()=>{console.log("cancelou")}},
+        {text: 'Confirmar', role: 'confirmar', handler: (acao)=>{this.excluirContato()}}
+      ],
     });
     await alert.present();
   }
