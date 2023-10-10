@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Contato } from 'src/app/model/entities/Contato';
-import { ContatoService } from 'src/app/model/services/contato.service';
+import { FirebaseService } from 'src/app/model/services/firebase.service';
 
 @Component({
   selector: 'app-cadastrar',
@@ -16,7 +16,7 @@ export class CadastrarPage implements OnInit {
   public genero! : number;
 
   constructor(private alertController: AlertController,
-    private router : Router, private contatoService : ContatoService) { }
+    private router : Router, private firebase : FirebaseService) { }
 
   ngOnInit() {
   }
@@ -26,8 +26,12 @@ export class CadastrarPage implements OnInit {
       let novo : Contato = new Contato(this.nome, this.telefone);
       novo.email = this.email;
       novo.genero = this.genero;
-      this.contatoService.cadastrar(novo);
-      this.router.navigate(["/home"]);
+      this.firebase.cadastrar(novo)
+      .then(() =>  this.router.navigate(["/home"]))
+      .catch((error) => {
+        console.log(error);
+        this.presentAlert("Erro", "Erro ao salvar contato!");
+      })
     }else{
       this.presentAlert("Erro", "Nome e Telefone são campos Obrigatórios!");
     }
