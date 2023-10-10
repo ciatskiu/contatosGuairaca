@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Contato } from 'src/app/model/entities/Contato';
-import { ContatoService } from 'src/app/model/services/contato.service';
+import { FirebaseService } from 'src/app/model/services/firebase.service';
 
 @Component({
   selector: 'app-detalhar',
@@ -10,7 +10,6 @@ import { ContatoService } from 'src/app/model/services/contato.service';
   styleUrls: ['./detalhar.page.scss'],
 })
 export class DetalharPage implements OnInit {
-  indice! : number;
   nome! : string;
   telefone! : number;
   email! : string;
@@ -19,18 +18,12 @@ export class DetalharPage implements OnInit {
   edicao: boolean = true;
 
 
-  constructor(private actRoute : ActivatedRoute,
-    private contatoService : ContatoService,
+  constructor(private firebase : FirebaseService,
     private alertController: AlertController,
     private router: Router) { }
 
   ngOnInit() {
-    this.actRoute.params.subscribe((parametros) => {
-      if(parametros["indice"]){
-        this.indice = parametros["indice"];
-      }
-    })
-    this.contato = this.contatoService.obterPorIndice(this.indice);
+    this.contato = history.state.contato;
     this.nome = this.contato.nome;
     this.telefone = this.contato.telefone;
     this.email = this.contato.email;
@@ -51,8 +44,12 @@ export class DetalharPage implements OnInit {
       let novo: Contato = new Contato(this.nome, this.telefone);
       novo.email = this.email;
       novo.genero = this.genero;
-      this.contatoService.atualizar(this.indice, novo);
-      this.router.navigate(["/home"]);
+      this.firebase.editar(novo, this.contato.id)
+      .then(()=>{this.router.navigate(["/home"]);})
+      .catch((error)=>{
+        console.log(error);
+        this.presentAlert("Erro", "Erro ao Atualizar Contato!");
+      })
     }else{
       this.presentAlert("Erro", "Nome e Telefone são campos Obrigatórios!");
     }
@@ -63,8 +60,13 @@ export class DetalharPage implements OnInit {
   }
 
   excluirContato(){
-    this.contatoService.deletar(this.indice);
-    this.router.navigate(["/home"]);
+    this.firebase.excluir(this.contato.id)
+    .then(() => { this.router.navigate(["/home"]);})
+    .catch((error)=>{
+      console.log(error);
+      this.presentAlert("Erro", "Erro ao Excluir Contato!");
+    })
+
   }
 
   async presentAlert(subHeader: string, message: string) {
