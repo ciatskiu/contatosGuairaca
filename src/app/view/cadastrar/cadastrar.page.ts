@@ -14,6 +14,7 @@ export class CadastrarPage implements OnInit {
   public telefone! : number;
   public email! : string;
   public genero! : number;
+  public imagem : any;
 
   constructor(private alertController: AlertController,
     private router : Router, private firebase : FirebaseService) { }
@@ -21,17 +22,28 @@ export class CadastrarPage implements OnInit {
   ngOnInit() {
   }
 
+  uploadFile(imagem: any){
+    this.imagem = imagem.files;
+  }
+
   cadastrar(){
     if(this.nome && this.telefone){
       let novo : Contato = new Contato(this.nome, this.telefone);
       novo.email = this.email;
       novo.genero = this.genero;
-      this.firebase.cadastrar(novo)
-      .then(() =>  this.router.navigate(["/home"]))
-      .catch((error) => {
-        console.log(error);
-        this.presentAlert("Erro", "Erro ao salvar contato!");
-      })
+      if(this.imagem){
+        this.firebase.uploadImage(this.imagem, novo)
+        ?.then(()=> {
+          this.router.navigate(["/home"]);
+        })
+      }else{
+        this.firebase.cadastrar(novo)
+        .then(() =>  this.router.navigate(["/home"]))
+        .catch((error) => {
+          console.log(error);
+          this.presentAlert("Erro", "Erro ao salvar contato!");
+        })
+      }
     }else{
       this.presentAlert("Erro", "Nome e Telefone são campos Obrigatórios!");
     }
