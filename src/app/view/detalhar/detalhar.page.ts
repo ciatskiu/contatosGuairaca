@@ -59,6 +59,8 @@ export class DetalharPage implements OnInit {
     this.presentConfirmAlert("ATENÇÃO", "Deseja realmente excluir o contato?");
   }
 
+  //firebase deploy
+
   excluirContato(){
     this.firebase.excluir(this.contato.id)
     .then(() => { this.router.navigate(["/home"]);})
