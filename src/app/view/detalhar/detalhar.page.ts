@@ -14,6 +14,7 @@ export class DetalharPage implements OnInit {
   telefone! : number;
   email! : string;
   genero! : number;
+  imagem! : any;
   contato! : Contato;
   edicao: boolean = true;
 
@@ -38,18 +39,29 @@ export class DetalharPage implements OnInit {
     }
   }
 
+  uploadFile(imagem: any){
+    this.imagem = imagem.files;
+  }
 
   editar(){
     if(this.nome && this.telefone){
       let novo: Contato = new Contato(this.nome, this.telefone);
       novo.email = this.email;
       novo.genero = this.genero;
-      this.firebase.editar(novo, this.contato.id)
-      .then(()=>{this.router.navigate(["/home"]);})
-      .catch((error)=>{
-        console.log(error);
-        this.presentAlert("Erro", "Erro ao Atualizar Contato!");
-      })
+
+      novo.id = this.contato.id;
+      if(this.imagem){
+        this.firebase.uploadImage(this.imagem, novo)
+        ?.then(()=>{this.router.navigate(["/home"]);})
+      }else{
+        novo.downloadURL = this.contato.downloadURL;
+        this.firebase.editar(novo, this.contato.id)
+        .then(()=>{this.router.navigate(["/home"]);})
+        .catch((error)=>{
+          console.log(error);
+          this.presentAlert("Erro", "Erro ao Atualizar Contato!");
+        })
+      }
     }else{
       this.presentAlert("Erro", "Nome e Telefone são campos Obrigatórios!");
     }
