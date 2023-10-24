@@ -48,7 +48,6 @@ export class DetalharPage implements OnInit {
       let novo: Contato = new Contato(this.nome, this.telefone);
       novo.email = this.email;
       novo.genero = this.genero;
-
       novo.id = this.contato.id;
       if(this.imagem){
         this.firebase.uploadImage(this.imagem, novo)
