@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-//import { Alert } from 'src/app/common/alert';
+import { Alert } from 'src/app/common/alert';
 
 @Component({
   selector: 'app-logar',
@@ -13,7 +13,7 @@ logar!: FormGroup;
 
 
   constructor(private router: Router,
-   // private alert : Alert,
+    private alert : Alert,
     private builder: FormBuilder) {
       this.logar = new FormGroup({
         email: new FormControl(''),
@@ -34,9 +34,9 @@ logar!: FormGroup;
 
   submitForm(){
     if(!this.logar.valid){
-    //  this.alert.presentAlert("OK", "Erro ao Logar!");
+      this.alert.presentAlert("OK", "Erro ao Logar!");
     }else{
-     // this.alert.presentAlert("OK", "Seja bem Vindo!");
+      this.alert.presentAlert("OK", "Seja bem Vindo!");
     }
   }
 
