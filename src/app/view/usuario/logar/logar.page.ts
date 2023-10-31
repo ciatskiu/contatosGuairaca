@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Alert } from 'src/app/common/alert';
+import { AuthService } from 'src/app/model/services/auth.service';
 
 @Component({
   selector: 'app-logar',
@@ -14,6 +15,7 @@ logar!: FormGroup;
 
   constructor(private router: Router,
     private alert : Alert,
+    private auth: AuthService,
     private builder: FormBuilder) {
       this.logar = new FormGroup({
         email: new FormControl(''),
@@ -36,8 +38,18 @@ logar!: FormGroup;
     if(!this.logar.valid){
       this.alert.presentAlert("OK", "Erro ao Logar!");
     }else{
-      this.alert.presentAlert("OK", "Seja bem Vindo!");
+      this.login();
     }
+  }
+
+  private login(){
+    this.auth.logar(this.logar.value['email'], this.logar.value['senha'])
+    .then((res)=>{
+      this.alert.presentAlert("OK", "Seja bem Vindo!");
+      this.router.navigate(['home']); })
+    .catch((error)=>{
+      this.alert.presentAlert("OK", "Erro ao Logar! Tente Novamente");
+      console.log(error); })
   }
 
   logarComGmail(){}

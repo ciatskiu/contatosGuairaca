@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Alert } from 'src/app/common/alert';
+import { AuthService } from 'src/app/model/services/auth.service';
 
 @Component({
   selector: 'app-registrar',
@@ -11,7 +13,8 @@ export class RegistrarPage implements OnInit {
   cadastro!: FormGroup;
 
   constructor(private router: Router,
-    // private alert : Alert,
+    private auth : AuthService,
+     private alert : Alert,
      private builder: FormBuilder) {
        this.cadastro = new FormGroup({
          email: new FormControl(''),
@@ -34,9 +37,21 @@ export class RegistrarPage implements OnInit {
 
   submitForm(){
     if(!this.cadastro.valid){
-    //  this.alert.presentAlert("OK", "Erro ao Logar!");
+      this.alert.presentAlert("OK", "Erro ao Logar!");
     }else{
-     // this.alert.presentAlert("OK", "Seja bem Vindo!");
+      this.registrar();
+
     }
  }
+
+  private registrar(){
+        this.auth.registrar(this.cadastro.value['email'],this.cadastro.value['senha'])
+        .then((res)=>{
+          this.alert.presentAlert("OK", "Seja bem Vindo!");
+          this.router.navigate(['/logar']);})
+        .catch((error) => {
+          this.alert.presentAlert("Erro", "Erro ao cadastrar!");
+          console.log(error);
+        })
+      }
 }
