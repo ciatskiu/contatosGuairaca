@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Contato } from 'src/app/model/entities/Contato';
+import { AuthService } from 'src/app/model/services/auth.service';
 import { FirebaseService } from 'src/app/model/services/firebase.service';
 
 @Component({
@@ -17,11 +18,15 @@ export class DetalharPage implements OnInit {
   imagem! : any;
   contato! : Contato;
   edicao: boolean = true;
+  user : any;
 
 
   constructor(private firebase : FirebaseService,
     private alertController: AlertController,
-    private router: Router) { }
+    private auth : AuthService,
+    private router: Router) {
+      this.user = this.auth.getUsuarioLogado();
+    }
 
   ngOnInit() {
     this.contato = history.state.contato;
@@ -49,6 +54,7 @@ export class DetalharPage implements OnInit {
       novo.email = this.email;
       novo.genero = this.genero;
       novo.id = this.contato.id;
+      novo.uid = this.user.uid;
       if(this.imagem){
         this.firebase.uploadImage(this.imagem, novo)
         ?.then(()=>{this.router.navigate(["/home"]);})

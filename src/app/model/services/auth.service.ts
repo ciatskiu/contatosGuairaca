@@ -2,6 +2,10 @@ import { Injectable, NgZone } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
+import { getAuth, signInWithPopup, browserPopupRedirectResolver,
+GoogleAuthProvider} from 'firebase/auth'; // npm i -g firebase --save
+import { Usuario } from '../entities/Usuario';
+
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +54,12 @@ export class AuthService {
      public getUsuarioLogado(){
       const user : any = JSON.parse(localStorage.getItem('user') || 'null');
       return (user !== null) ? user : null;
+     }
+
+     public logarComGoogle(){
+      const provider = new GoogleAuthProvider();
+      const auth = getAuth();
+      return signInWithPopup(auth, provider, browserPopupRedirectResolver);
      }
 
 }

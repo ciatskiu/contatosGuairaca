@@ -52,7 +52,15 @@ logar!: FormGroup;
       console.log(error); })
   }
 
-  logarComGmail(){}
+  logarComGmail(){
+    this.auth.logarComGoogle()
+    .then((res)=>{
+      this.alert.presentAlert("OK", "Seja bem Vindo!");
+      this.router.navigate(['home']); })
+    .catch((error)=>{
+      this.alert.presentAlert("OK", "Erro ao Logar! Tente Novamente");
+      console.log(error); })
+  }
 
   irParaRegistrar(){
     this.router.navigate(["/registrar"]);

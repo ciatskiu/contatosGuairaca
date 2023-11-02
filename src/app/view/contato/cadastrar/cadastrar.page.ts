@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { Contato } from 'src/app/model/entities/Contato';
+import { AuthService } from 'src/app/model/services/auth.service';
 import { FirebaseService } from 'src/app/model/services/firebase.service';
 
 @Component({
@@ -15,9 +16,12 @@ export class CadastrarPage implements OnInit {
   public email! : string;
   public genero! : number;
   public imagem : any;
-
+  user : any;
   constructor(private alertController: AlertController,
-    private router : Router, private firebase : FirebaseService) { }
+    private auth : AuthService,
+    private router : Router, private firebase : FirebaseService) {
+      this.user = this.auth.getUsuarioLogado();
+    }
 
   ngOnInit() {
   }
@@ -31,6 +35,7 @@ export class CadastrarPage implements OnInit {
       let novo : Contato = new Contato(this.nome, this.telefone);
       novo.email = this.email;
       novo.genero = this.genero;
+      novo.uid = this.user.uid;
       if(this.imagem){
         this.firebase.uploadImage(this.imagem, novo)
         ?.then(()=> {

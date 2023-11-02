@@ -1,34 +1,44 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Injector } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Contato } from '../entities/Contato';
 import { finalize } from 'rxjs/operators';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { AuthService } from './auth.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
   private PATH : string = "contatos";
+  user : any;
 
   constructor(private firestore : AngularFirestore,
+   @Inject(Injector) private readonly injector : Injector,
     private storage : AngularFireStorage) { }
 
+    private injectAuthService(){
+     return this.injector.get(AuthService);
+    }
+
   buscarTodos(){
-    return this.firestore.collection(this.PATH).snapshotChanges();
+    this.user = this.injectAuthService().getUsuarioLogado();
+    return this.firestore.collection(this.PATH,
+       ref => ref.where('uid','==', this.user.uid)).snapshotChanges();
   }
 
   cadastrar(contato: Contato){
     return this.firestore.collection(this.PATH)
     .add({nome : contato.nome, email: contato.email,
     telefone: contato.telefone, genero : contato.genero,
-    downloadURL : contato.downloadURL});
+    downloadURL : contato.downloadURL, uid : contato.uid});
   }
 
   editar(contato: Contato, id : string){
     return this.firestore.collection(this.PATH).doc(id)
     .update({nome : contato.nome, email: contato.email,
       telefone: contato.telefone, genero : contato.genero,
-      downloadURL : contato.downloadURL});
+      downloadURL : contato.downloadURL, uid : contato.uid});
   }
 
 
